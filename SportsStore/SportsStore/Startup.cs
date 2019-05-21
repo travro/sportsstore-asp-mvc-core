@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using SportsStore.Models;
 
 namespace SportsStore
 {
@@ -15,8 +16,12 @@ namespace SportsStore
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            //tells Core that when a component such as a controller needs and implementation of the IProductRepository interface, it should receive an instance
+            //of the FakeProductRepository class
+            services.AddTransient<IProductRepository, FakeProductRepository>();
             //extension method setups up shared object used in mvc
             services.AddMvc();
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -29,10 +34,13 @@ namespace SportsStore
             //serve static content frmo wwwroot folder, such as CSS files
             app.UseStaticFiles();
 
-            //enamables asp.net core mvc
+            //enables asp.net core mvc;
+            //sets up MVC middleware to handle HTTP requests, mappign URLS to controllers/action methods
             app.UseMvc(routes =>
             {
-
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Product}/{action=List}/{id?}");
             });
         }
     }
